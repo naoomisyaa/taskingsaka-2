@@ -1,47 +1,41 @@
-import React from "react";
+import React from 'react';
 
-export type ColumnDefs = {
-    title: string;
-} & (
-        | {
-            field: string;
-        }
-        | {
-            render: (rowData: Record<string, any>) => React.ReactNode;
-        }
-    );
+interface ColumnDef<T> {
+  title: string;
+  field?: keyof T;
+  render?: (rowData: T) => React.ReactNode;
+}
 
-const Table = ({
-    columnDefs,
-    data,
-}: {
-    columnDefs: ColumnDefs[];
-    data: Record<string, any>[];
-}) => {
-    return (
-        <table className="min-w-full divide-y overflow-hidden rounded-lg divide-gray-800 shadow-lg">
-            <thead className="bg-green-200">
-                <tr>
-                    {columnDefs.map((column, index) => (
-                        <th key={index} scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {column.title}
-                        </th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((rowData, index) => (
-                    <tr key={index} className="cursor-pointer hover:bg-gray-100">
-                        {columnDefs.map((column, index) => (
-                            <td key={index} className="px-6 py-4 whitespace-nowrap">
-                                {"field" in column ? rowData[column.field!] : column.render ? column.render(rowData) : null}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    );
-};
+interface TableProps<T> {
+  columnDefs: ColumnDef<T>[];
+  data: TableRow<T>;
+}
+
+function Table<T>({ columnDefs, data }: TableProps<T>) {
+  return (
+    <table className="min-w-full border-collapse bg-white">
+      <thead>
+        <tr>
+          {columnDefs.map((col, index) => (
+            <th key={index} className="px-4 py-2 border border-gray-300">
+              {col.title}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.data.map((row, rowIndex) => (
+          <tr key={rowIndex} className="border-b border-gray-300">
+            {columnDefs.map((col, colIndex) => (
+              <td key={colIndex} className="px-4 py-2 text-center border border-gray-300">
+                {col.render ? col.render(row) : row[col.field as keyof T]}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
 
 export default Table;

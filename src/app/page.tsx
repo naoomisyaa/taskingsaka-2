@@ -6,7 +6,7 @@ export default function Home() {
     <main className="flex min-h-screen items-center justify-around bg-slate-50">
 
       <section>
-        <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center">Non Generic Table</h1>
+        <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center">Generic Table</h1>
         <Table columnDefs={[
           {
             title: "Name",
@@ -25,7 +25,7 @@ export default function Home() {
             field: "phone"
           }
         ]}
-          data={employees}
+        data={employees?.data ? employees : { data: [] }} // Cek apakah data ada, jika tidak set data kosong
         />
       </section>
 
